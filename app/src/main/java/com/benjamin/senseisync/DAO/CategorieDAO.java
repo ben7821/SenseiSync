@@ -47,9 +47,38 @@ public class CategorieDAO extends MainDAO<Categorie> {
         close();
     }
     //suppression de la matière en fonction de son numéro
-    public Categorie read(long id){return null;}
+    public Categorie read(long id){
+        Cursor curseurCategorie;
+        Categorie uneCategorie;
+        String Lib;
+        //Ouverture de la base en lecture
+        open();
+        //Execution de la requête de selection avec tri par nom de matière
+        curseurCategorie = db.query(TABLE_CATEGORIE,null,COL_ID_CATEGORIE + " = " + id,null,null,null,null);
+        //Initialisation de la liste des matières
+        curseurCategorie.moveToFirst();
+        //Récupération des données de l'enregistrement
+        Lib = curseurCategorie.getString(1);
+        //Ajout de la matière dans la liste
+        uneCategorie = new Categorie((int)id,Lib);
+        curseurCategorie.close();
+        close();
+        return uneCategorie;
+    }
     //Recherche le numéro de matière dans la base et la retourne
 
+    public Integer getCategorieByName(String name) {
+        Cursor curseurCategorie;
+        Integer idCategorie = null;
+        open();
+        curseurCategorie = db.query(TABLE_CATEGORIE, new String[] {COL_ID_CATEGORIE}, COL_LIB + " = ?", new String[] {name}, null, null, null);
+        if (curseurCategorie.moveToFirst()) {
+            idCategorie = curseurCategorie.getInt(0);
+        }
+        curseurCategorie.close();
+        close();
+        return idCategorie;
+    }
     public ArrayList<Categorie> read() {
         Cursor curseurCategorie;
         ArrayList<Categorie> listeDesCategorie;

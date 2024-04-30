@@ -18,6 +18,8 @@ public class Judoka {
         DateNaissance = dateNaissance;
         this.Cat = Cat;
     }
+    public Judoka() {
+    }
 
     public int getIdjudoka() {
         return idjudoka;

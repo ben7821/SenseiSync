@@ -54,9 +54,21 @@ public class JudokaDAO extends MainDAO<Judoka> {
         ctv.put(COL_CATEGORIE, obj.getCat().getLibelle());
         open();
         db.update(TABLE_JUDOKA, ctv, COL_ID_JUDOKA + " = " + obj.getIdjudoka(), null);
-        Log.i("UPDATE", "UPDATE");
         close();
     }
+    //Création de la matière dans la base
+    public void CreateJudoka(Judoka judoka) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Nom", judoka.getNom());
+        contentValues.put("Prenom", judoka.getPrenom());
+        contentValues.put("Tel", judoka.getTel());
+        contentValues.put("DateNaissance", judoka.getDateNaissance().getTime());
+        contentValues.put("idCategorie", judoka.getCat().getIdCategorie());
+        open();
+        db.insert("Judoka", null, contentValues);
+        close();
+    }
+
     //modification de la catégorie du judoka si elle existe
     public void updateJudokaCategory(Judoka judoka, int newCategoryId) {
         ContentValues contentValues = new ContentValues();
@@ -67,7 +79,6 @@ public class JudokaDAO extends MainDAO<Judoka> {
         open();
         db.update("Judoka", contentValues, whereClause, whereArgs);
         close();
-        Log.d("JudokaDAO", "Updated judoka category");
     }
     //suppression de la catégorie du judoka et le remet à 0
     public void removeJudokaFromCategory(Judoka judoka) {
