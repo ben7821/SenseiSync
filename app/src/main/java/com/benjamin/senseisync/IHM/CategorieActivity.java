@@ -2,9 +2,13 @@ package com.benjamin.senseisync.IHM;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -98,23 +102,40 @@ public class CategorieActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Options for " + judoka.getNom());
 
-        // Ajoutez des boutons pour changer la catégorie ou supprimer le judoka
+        // Create a spinner
+        Spinner spinner = new Spinner(this);
+        // Get all categories
+        ArrayList<Categorie> allCategories = categorieDAO.read();
+        // Create an ArrayAdapter using the categories list
+        ArrayAdapter<Categorie> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allCategories);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        // Set the current category as the selected item in the spinner
+        int currentCategoryId = judoka.getCat().getIdCategorie();
+        for (int i = 0; i < allCategories.size(); i++) {
+            if (allCategories.get(i).getIdCategorie() == currentCategoryId) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
+        builder.setView(spinner);
+
         builder.setPositiveButton("Change Category", (dialog, which) -> {
-            // Changez la catégorie du judoka
-            changeJudokaCategory(judoka);
+            // Get the selected category
+            Categorie selectedCategory = (Categorie) spinner.getSelectedItem();
+            // Update the judoka's category
+            judokaDAO.updateJudokaCategory(judoka, selectedCategory.getIdCategorie());
         });
         builder.setNegativeButton("Remove from Category", (dialog, which) -> {
-            // Supprimez le judoka de la catégorie
             removeJudokaFromCategory(judoka);
         });
 
-        // Affichez l'AlertDialog
         builder.show();
     }
 
-    private void changeJudokaCategory(Judoka judoka) {
-        // Affichez un dialogue pour sélectionner la nouvelle catégorie, puis appelez updateJudokaCategory
-        int newCategoryId = judoka.getIdjudoka(); // Obtenez l'ID de la nouvelle catégorie
+    private void changeJudokaCategory(Judoka judoka,EditText input) {
+        int newCategoryId = Integer.parseInt(input.getText().toString());
         judokaDAO.updateJudokaCategory(judoka, newCategoryId);
     }
 

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteSenseisync extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     private static final String DATABASE_NAME = "BDDSync";
     private Context context=null;
 
@@ -45,6 +45,10 @@ public class SQLiteSenseisync extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO Judoka VALUES(2,'Titi','Tutu',0488127318,'2002-01-01',2)");
         db.execSQL("INSERT INTO Judoka VALUES(3,'Tata','Titi',0488127318,'2003-01-01',3)");
         db.execSQL("INSERT INTO Judoka VALUES(4,'Tutu','Toto',0488127318,'2004-01-01',4)");
+        db.execSQL("INSERT INTO Judoka VALUES(5,'RaRa','Titi',0488127318,'2005-01-01',5)");
+        db.execSQL("INSERT INTO Judoka VALUES(6,'RiRi','Toto',0488127318,'2006-01-01',6)");
+        db.execSQL("INSERT INTO Judoka VALUES(7,'RuRu','Tata',0488127318,'2007-01-01',7)");
+        db.execSQL("INSERT INTO Judoka VALUES(8,'ReRe','Tutu',0488127318,'2007-01-01','8')");
 
         // Ajout de la tables Cours
         db.execSQL("DROP TABLE IF EXISTS COURS");

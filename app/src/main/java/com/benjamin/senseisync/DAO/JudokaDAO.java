@@ -54,21 +54,24 @@ public class JudokaDAO extends MainDAO<Judoka> {
         ctv.put(COL_CATEGORIE, obj.getCat().getLibelle());
         open();
         db.update(TABLE_JUDOKA, ctv, COL_ID_JUDOKA + " = " + obj.getIdjudoka(), null);
+        Log.i("UPDATE", "UPDATE");
         close();
     }
     //modification de la catégorie du judoka si elle existe
     public void updateJudokaCategory(Judoka judoka, int newCategoryId) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("idCategorie", newCategoryId); // Assurez-vous que "idCategorie" est le nom correct de la colonne
+        contentValues.put("idCategorie", newCategoryId);
 
-        String whereClause = "idJudoka = ?";
+        String whereClause = "idjudoka = ?";
         String[] whereArgs = new String[] { String.valueOf(judoka.getIdjudoka()) };
-
-        db.update("Judoka", contentValues, whereClause, whereArgs); // Assurez-vous que "Judoka" est le nom correct de la table
+        open();
+        db.update("Judoka", contentValues, whereClause, whereArgs);
+        close();
+        Log.d("JudokaDAO", "Updated judoka category");
     }
     //suppression de la catégorie du judoka et le remet à 0
     public void removeJudokaFromCategory(Judoka judoka) {
-        updateJudokaCategory(judoka, 0); // Met à jour la catégorie du judoka à 0 (pas de catégorie)
+        updateJudokaCategory(judoka, 0);
     }
 
     //modification du nom et coefficient de la matière en fonction du numéro
