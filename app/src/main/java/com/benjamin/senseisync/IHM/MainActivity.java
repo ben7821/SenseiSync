@@ -1,13 +1,21 @@
 package com.benjamin.senseisync.IHM;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.benjamin.senseisync.DAO.CoursDAO;
+import com.benjamin.senseisync.METIER.Cours;
 import com.benjamin.senseisync.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
     private Button bQuitter;
@@ -15,7 +23,10 @@ public class MainActivity extends AppCompatActivity {
     private Button bJudoka;
     private Button bCours;
     private Button bOther;
+    private CoursDAO coursDAO;
+    private RecyclerView recyclerViewCours;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +42,27 @@ public class MainActivity extends AppCompatActivity {
         bJudoka.setOnClickListener(buttonClickListener);
         bCours.setOnClickListener(buttonClickListener);
         bOther.setOnClickListener(buttonClickListener);
+
+        // Initialize the CoursDAO
+        coursDAO = new CoursDAO(this);
+
+        // Get the list of courses
+        ArrayList<Cours> coursList = coursDAO.read();
+
+        // Sort the list by date
+        Collections.sort(coursList, new Comparator<Cours>() {
+            @Override
+            public int compare(Cours c1, Cours c2) {
+                return c1.getDate().compareTo(c2.getDate());
+            }
+        });
+
+        // Initialize the RecyclerView and its adapter
+        recyclerViewCours = findViewById(R.id.lvCours);
+        CoursAdapter coursAdapter = new CoursAdapter(coursList);
+
+        // Set the adapter to the RecyclerView
+        recyclerViewCours.setAdapter(coursAdapter);
     }
 
     private void constructeurGraphique(){

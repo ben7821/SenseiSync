@@ -1,5 +1,6 @@
 package com.benjamin.senseisync.IHM;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -14,8 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.benjamin.senseisync.DAO.CategorieDAO;
+import com.benjamin.senseisync.DAO.Cours_JudokaDAO;
 import com.benjamin.senseisync.DAO.JudokaDAO;
 import com.benjamin.senseisync.METIER.Categorie;
+import com.benjamin.senseisync.METIER.Cours;
 import com.benjamin.senseisync.METIER.Judoka;
 import com.benjamin.senseisync.R;
 
@@ -27,13 +30,14 @@ import java.util.Date;
 public class JudokaActivity extends AppCompatActivity {
 
     private JudokaDAO judokaDAO;
+    private RecyclerView recyclerViewJudoka;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_judoka);
 
-        RecyclerView recyclerViewJudoka = findViewById(R.id.recyclerViewJudoka);
+        recyclerViewJudoka = findViewById(R.id.recyclerViewJudoka);
         recyclerViewJudoka.setLayoutManager(new LinearLayoutManager(this));
 
         Button btnHome = findViewById(R.id.btnHome);
@@ -126,7 +130,70 @@ public class JudokaActivity extends AppCompatActivity {
     }
 
     // Implement the updateRecyclerView method here
+    @SuppressLint("NotifyDataSetChanged")
     private void updateRecyclerView() {
-        // Your code here
+        // Get the updated list of judokas from the database
+        ArrayList<Judoka> updatedJudokas = judokaDAO.read();
+
+        // Create a new adapter with the updated list
+        JudokaAdapter updatedAdapter = new JudokaAdapter(updatedJudokas);
+
+        // Set the new adapter on the RecyclerView
+        recyclerViewJudoka.setAdapter(updatedAdapter);
+
+        // Notify the adapter that the data set has changed
+        updatedAdapter.notifyDataSetChanged();
     }
+
+   public void showJudokaOptionsDialog(Judoka judoka) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Options for " + judoka.getNom());
+
+    builder.setPositiveButton("Delete", (dialog, which) -> {
+        // Affichez un autre AlertDialog pour confirmer la suppression
+        showDeleteConfirmationDialog(judoka);
+    });
+
+    builder.setNegativeButton("Show Courses", (dialog, which) -> {
+        // Affichez la liste des cours auxquels le judoka participe
+        showCours(judoka);
+    });
+
+    builder.show();
+}
+
+public void showDeleteConfirmationDialog(Judoka judoka) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Delete Judoka" + " " + judoka.getNom());
+    builder.setMessage("Are you sure you want to delete this judoka?");
+
+    builder.setPositiveButton("Yes", (dialog, which) -> {
+        judokaDAO.delete(judoka);
+        updateRecyclerView();
+    });
+
+    builder.setNegativeButton("No", null);
+
+    builder.show();
+}
+
+public void showCours(Judoka judoka) {
+    Cours_JudokaDAO cours_judokaDAO = new Cours_JudokaDAO(this);
+    ArrayList<Cours> cours = cours_judokaDAO.getCours(judoka);
+
+    // Créez un StringBuilder pour construire le message de l'AlertDialog
+    StringBuilder message = new StringBuilder();
+    for (Cours c : cours) {
+        message.append(c.getIdCour()).append("\n");
+        message.append(c.getDate()).append("\n");
+    }
+
+    // Créez et affichez l'AlertDialog
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Cours for " + judoka.getNom());
+    builder.setMessage(message.toString());
+    builder.setPositiveButton("OK", null);
+    builder.show();
+}
+
 }

@@ -75,8 +75,10 @@ public class CategorieActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Judokas in " + categorie.getLibelle());
 
-        // Obtenez la liste des judokas dans cette catégorie
+        // Initialisez la liste des judokas ici
+        judokaDAO = new JudokaDAO(this);
         ArrayList<Judoka> judokas = judokaDAO.read();
+        Log.d("Judokas", judokas.toString());
 
         // Filtrez la liste des judokas pour obtenir uniquement ceux de la catégorie spécifique
         int idCategorie = categorie.getIdCategorie();

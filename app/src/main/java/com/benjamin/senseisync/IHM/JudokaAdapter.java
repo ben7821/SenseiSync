@@ -17,7 +17,7 @@ import java.util.Calendar;
 
 public class JudokaAdapter extends RecyclerView.Adapter<JudokaAdapter.JudokaViewHolder> {
 
-    private ArrayList<Judoka> judokas;
+    private static ArrayList<Judoka> judokas;
 
     public JudokaAdapter(ArrayList<Judoka> judokas) {
         this.judokas = judokas;
@@ -60,6 +60,14 @@ public class JudokaAdapter extends RecyclerView.Adapter<JudokaAdapter.JudokaView
             textViewTel = itemView.findViewById(R.id.textViewTel);
             textViewDateNaissance = itemView.findViewById(R.id.textViewDateNaissance);
             textViewCategorie = itemView.findViewById(R.id.textViewCategorie);
+
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    // Appelez la méthode dans JudokaActivity pour afficher l'AlertDialog
+                    ((JudokaActivity) v.getContext()).showJudokaOptionsDialog(judokas.get(position));
+                }
+            });
         }
     }
 }
